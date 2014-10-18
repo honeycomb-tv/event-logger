@@ -20,6 +20,8 @@
 
 # Ignore IntelliJ files
 /.idea
+/.generators
+/*.iml
 
 # Mac stuff
 .DS_Store
