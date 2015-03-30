@@ -17,6 +17,7 @@
 
 # Ignore uploads
 /storage
+/public/system/pull_lists
 
 # Ignore IntelliJ files
 /.idea
@@ -28,3 +29,4 @@
 
 # Cached gems
 /vendor/cache
+
