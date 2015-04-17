@@ -17,7 +17,7 @@
 
 # Ignore uploads
 /storage
-/public/system/pull_lists
+/public/system
 
 # Ignore IntelliJ files
 /.idea
