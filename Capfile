@@ -24,5 +24,8 @@ require 'capistrano/rails/migrations'
 # Airbrake exception notification
 require 'airbrake/capistrano3'
 
+# Starting background queues
+require "capistrano-resque"
+
 # Loads custom tasks from `lib/capistrano/tasks' if you have any defined.
 Dir.glob('lib/capistrano/tasks/*.rake').each { |r| import r }
