@@ -14,7 +14,7 @@ class OtherBackgroundTasks::Validate
       Rails.logger.info "Failed validation due to mismatched sha3"
     end
   rescue Exception => exc
-    h_file.fail_validation
+    h_file.fail_validation unless h_file.nil?
     Rails.logger.error "Exception during validation: #{exc.message}"
     Airbrake.notify(exc)
   end
