@@ -30,3 +30,5 @@
 # Cached gems
 /vendor/cache
 
+# Swap files
+**/*.swp
