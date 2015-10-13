@@ -1,0 +1,91 @@
+# In order to measure the time taken in each of the states of the request material flow:
+# https://docs.google.com/a/thisishoneycomb.com/drawings/d/15Wsr92sk5kpqJxJeXnYDc8o7ORD-eswA5gaegRkzkok/edit?usp=sharing
+#
+# We are assigining each state transition a unique ID which can then be logged together
+# with a transaction trace ID
+#
+# See:
+# https://blog.logentries.com/2015/07/ditch-the-debugger-and-use-log-analysis-instead/
+
+# Ingest Client
+ingest_master_client_copy_completion_check_start:       21000
+ingest_master_client_copy_completion_check_complete:    21001
+ingest_master_client_copy_completion_check_error:       21002
+ingest_master_client_ingest_queued:                     21003 # Is this queuing the upload on the client or the create on the server?
+ingest_master_client_ingest_queue_error:                21004
+ingest_master_client_ingest_queue_failure:              21005
+ingest_master_client_ingest_upload_complete:            21006
+
+# Material API Tier - Need clarity on relationship between Material and Ingest Master - Should Material Namespace Prefix all this?
+material_create_start:                                  22000
+material_create_complete:                               22001
+material_create_aborted:                                22002
+
+# Ingest Master API Tier
+ingest_master_create_start:                             22010
+ingest_master_create_complete:                          22011
+ingest_master_create_aborted:                           22012
+# Ingest Master API Tier store (in NFS)
+ingest_master_store_start:                              22100
+ingest_master_store_complete:                           22101
+ingest_master_store_aborted:                            22102
+# Ingest Master API Tier store metadata (in Database)
+ingest_master_store_metadata_start:                     22103
+ingest_master_store_metadata_complete:                  22104
+ingest_master_store_metadata_aborted:                   22105
+# Ingest Master Validation
+ingest_master_validate_queued:                          22200
+ingest_master_validate_start:                           22201
+ingest_master_validate_complete:                        22202
+ingest_master_validate_aborted:                         22203
+# Ingest Master Get Media Info
+ingest_master_get_media_info_queued:                    22300
+ingest_master_get_media_info_start:                     22301
+ingest_master_get_media_info_complete:                  22302
+ingest_master_get_media_info_aborted:                   22303
+# Ingest Master Basic QC
+ingest_master_basic_qc_queued:                          22400
+ingest_master_basic_qc_start:                           22401
+ingest_master_basic_qc_complete:                        22402
+ingest_master_basic_qc_aborted:                         22403
+# Ingest Master Transcode Clock
+ingest_master_transcode_clock_queued:                   22500
+ingest_master_transcode_clock_start:                    22501
+ingest_master_transcode_clock_complete:                 22502
+ingest_master_transcode_clock_aborted:                  22503
+# Ingest Master Transcode Proxy
+ingest_master_transcode_proxy_queued:                   22600
+ingest_master_transcode_proxy_start:                    22601
+ingest_master_transcode_proxy_complete:                 22602
+ingest_master_transcode_proxy_aborted:                  22603
+# Ingest Master Transcode Thumbnails
+ingest_master_transcode_thumbnails_queued:              22700
+ingest_master_transcode_thumbnails_start:               22701
+ingest_master_transcode_thumbnails_complete:            22702
+ingest_master_transcode_thumbnails_aborted:             22703
+# Ingest Master Replicate
+ingest_master_replicate_queued:                         22800
+ingest_master_replicate_start:                          22801
+ingest_master_replicate_complete:                       22802
+ingest_master_replicate_aborted:                        22803
+
+# Destination Master Transcode
+destination_master_transcode_queued:                    23000
+destination_master_transcode_start:                     23001
+destination_master_transcode_copy_to_vantage_start:     23100
+destination_master_transcode_copy_to_vantage_complete:  23101
+destination_master_transcode_copy_to_vantage_aborted:   23102
+destination_master_transcode_copy_from_vantage_start:   23103
+destination_master_transcode_copy_from_vantage_end:     23104
+destination_master_transcode_copy_from_vantage_aborted: 23105
+
+# Destination Master Caption Re-Insertion
+destination_master_transcode_captions_insert_start:     23200
+destination_master_transcode_captions_insert_complete:  23201
+destination_master_transcode_captions_insert_aborted:   23202
+
+# Destination Master Validation
+destination_master_validate_queued:                     23300
+destination_master_validate_start:                      23301
+destination_master_validate_complete:                   23302
+destination_master_validate_abort:                      23303
