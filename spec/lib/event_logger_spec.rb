@@ -1,21 +1,10 @@
 # Produce consistent, self describing log entries which allow us
 # to measure things across the whole system
 
-# Starting in the Rails world but there is no reason why this should not be
-# factored out of honeycomb-web and also used by Ingest and the Receiving Agent
-
-require 'rails_helper'
-
-EVENTS = {
-  transcode_start: 20000,
-  transcode_end: 20001,
-  transcode_queue: 20002,
-  transcode_abort: 20003
-}
+require 'event_logger'
 
 describe EventLogger do
   subject { EventLogger.instance }
-
 
   it 'is a singleton' do
     expect(subject).to eq(EventLogger.instance)
@@ -33,14 +22,16 @@ describe EventLogger do
     expect(entry).to eq('type=job name=transcoding_job state=enqueued materialid=TTB/GODD004/030')
   end
 
-  it 'passes the log entry to the rails logger so it ends up in the right place' do
-    expect(Rails.logger).to receive(:info).with('type=job name=make_thumbnails state=failed').once
+  it 'can be configured with a logger of your choice' do
 
-    subject.log(:job, name: 'make_thumbnails', state: 'failed')
   end
 
-  it 'adds a traceable job_id to every logged event' do
-    skip 'not yet implemented'
+  it 'passes the log entry to the logger so it ends up in the right place' do
+    my_logger = instance_double(Logger)
+    subject.logger = my_logger
+    expect(my_logger).to receive(:info).with('type=job name=make_thumbnails state=failed').once
+
+    subject.log(:job, name: 'make_thumbnails', state: 'failed')
   end
 
   it 'determines the severity from the event mapping' do
