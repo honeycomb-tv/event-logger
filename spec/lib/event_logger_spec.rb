@@ -4,6 +4,7 @@
 require 'event_logger'
 
 describe EventLogger do
+
   subject { EventLogger.instance }
 
   it 'is a singleton' do
@@ -35,17 +36,20 @@ describe EventLogger do
   end
 
   it 'determines the severity from the event mapping' do
-    skip 'not yet implemented'
 
-    expect(Rails.logger).to receive(:error).with('type=job name=validate state=failed').once
+    my_logger = instance_double(Logger)
+    subject.logger = my_logger
+    subject.mapping = {"validate" => {state: :failed, severity: :error}}
+    expect(my_logger).to receive(:error).with('type=job name=validate state=failed').once
 
     subject.log(:job, name: 'validate', state: :failed)
   end
 
   it 'allows overriding of severity' do
-    skip 'not yet implemented'
 
-    expect(Rails.logger).to receive(:warn).with('type=mark name=all_jobs_scheduled').once
+    my_logger = instance_double(Logger)
+    subject.logger = my_logger
+    expect(my_logger).to receive(:warn).with('type=mark name=all_jobs_scheduled').once
 
     subject.log(:mark, name: 'all_jobs_scheduled', severity: :warn)
   end

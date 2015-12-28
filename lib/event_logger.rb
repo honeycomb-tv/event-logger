@@ -4,11 +4,13 @@ require 'logger'
 class EventLogger
 
   attr_accessor :logger
+  attr_accessor :mapping
 
   include Singleton
 
   def initialize
     @logger = Logger.new(STDOUT)
+    @mapping = nil
   end
 
   def self.log(*args)
@@ -16,7 +18,21 @@ class EventLogger
   end
 
   def log(type, details = {})
-    @logger.info format_log_entry(details_for(type, details))
+
+    severity = 'info'
+  
+    unless details.has_key?(:severity)
+      unless @mapping.nil?
+        if @mapping.has_key?(details[:name])
+          severity = @mapping[details[:name]][:severity]
+        end
+      end
+    else
+      severity = details[:severity]
+      details.delete(:severity)
+    end
+
+    @logger.send(severity, format_log_entry(details_for(type, details)))
   end
 
   private
