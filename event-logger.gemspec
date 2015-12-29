@@ -1,5 +1,5 @@
 Gem::Specification.new do |s|
-  s.name        = 'logger'
+  s.name        = 'event-logger'
   s.version     = '0.0.0'
   s.date        = '2015-12-28'
   s.summary     = "Event Logger"
