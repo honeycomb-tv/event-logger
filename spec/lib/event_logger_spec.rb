@@ -53,4 +53,17 @@ describe EventLogger do
 
     subject.log(:mark, name: 'all_jobs_scheduled', severity: :warn)
   end
+
+  it 'can create a Correlation ID' do
+
+    first_correlation_id = subject.create_correlation_id()
+    expect(first_correlation_id).to match('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')
+
+    second_correlation_id = subject.create_correlation_id()
+    expect(second_correlation_id).to match('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')
+
+    expect(first_correlation_id).not_to eq(second_correlation_id)
+
+  end
+
 end

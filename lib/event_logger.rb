@@ -1,5 +1,6 @@
 require 'singleton'
 require 'logger'
+require 'uuidtools'
 
 class EventLogger
 
@@ -33,6 +34,10 @@ class EventLogger
     end
 
     @logger.send(severity, format_log_entry(details_for(type, details)))
+  end
+
+  def  create_correlation_id()
+    UUIDTools::UUID.random_create.to_s
   end
 
   private
