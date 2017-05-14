@@ -1,7 +1,7 @@
 # Produce consistent, self describing log entries which allow us
 # to measure things across the whole system
 
-require 'event_logger'
+require_relative '../../lib/event-logger.rb'
 
 describe EventLogger do
 
