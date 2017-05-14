@@ -1,14 +1,16 @@
-# logger
-
-Based on:
-
-https://blog.logentries.com/2015/07/ditch-the-debugger-and-use-log-analysis-instead/
+# event-logger
 
 Log entries to a standard `name=value` format.
 
 e.g.
 
     type=job name=upload_material_job job_id=2949ad19-6c2a-4aec-b097-47a81ce629d3 state=enqueued materialid=TST/TEST017/015 material_id=8410 upload_id=537
+
+Based on:
+
+[Ditch the Debugger and use Log Analysis Instead](https://blog.logentries.com/2015/07/ditch-the-debugger-and-use-log-analysis-instead/) by Matthew Skelton.
+
+*There is ongoing discussion about switching to a JSON format.  We are trying this out on one of our services before we make a decision.  When this happens this logger will need to be updated accordingly.*
 
 # Log Elements and Format
 
@@ -24,19 +26,67 @@ Valid states are:
 * `completed` - Process has completed
 * `failed` - Process has failed
 
-If available is should log the `correlation_id`.  This is used for related activities that take place across process boundaries.  For example, `archive-material` archives a new Original Master `TTB-GODD004-030.mxf` to S3 and then makes a request to the API for it to be ingested.
+If available is should log the `correlation_id`.  This is used for related activities that take place across process boundaries.  
 
-Once ingested jobs are enqueued for the production of the Destination Masters, Slate, Proxy and Thumbnails.
+For example, `archive-material` archives a new Original Master `TTB-GODD004-030.mxf` to S3 and then makes a request to the API for it to be ingested.
 
-So when we put the logs together from `sky-sig-01.prod`, `hon-api-01.prod`, `hon-que-01.prod`, `hon-qtm-01.prod` and we should see something like:
+Once ingested jobs are enqueued for the production of the Destination Masters, Proxy and Thumbnails before finally being delivered to Discovery and Channel 5.
 
-    sky-sig-01.prod correlation_id=68a0296f-0d59-4b36-ba34-48073a8e1d6b name=  state=started
-    hon-api-01.prod correlation_id=68a0296f-0d59-4b36-ba34-48073a8e1d6b name=  state=started
-    hon-api-01.prod correlation_id=68a0296f-0d59-4b36-ba34-48073a8e1d6b name=  state=enqueued
-    hon-api-01.prod correlation_id=68a0296f-0d59-4b36-ba34-48073a8e1d6b name=  state=enqueued
-    hon-que-01.prod correlation_id=68a0296f-0d59-4b36-ba34-48073a8e1d6b name=  state=started
-    hon-qtm-01.prod correlation_id=68a0296f-0d59-4b36-ba34-48073a8e1d6b name=  state=started
-    hon-que-01.prod correlation_id=68a0296f-0d59-4b36-ba34-48073a8e1d6b name=  state=completed
-    hon-qtm-01.prod correlation_id=68a0296f-0d59-4b36-ba34-48073a8e1d6b name=  state=completed
+So when we put the logs together from `sky-sig-01.prod`, `hon-web-01.prod`, `hon-que-01.prod`, `hon-qtm-01.prod` and we should see something like:
 
-TBD - Vantage hostname and logging
+    sky-sig-01.prod correlation_id=68a0296f name=process-new-material state=started av-file=TTB-GODD004-030.mxf sidecar=TTB-GODD004-030.xml
+    sky-sig-01.prod correlation_id=68a0296f name=archive-av-file-to-s3 state=started
+    sky-sig-01.prod correlation_id=68a0296f name=archive-av-file-to-s3 state=completed archive-path=s3:/path/to/file/TTB-GODD004-030.mxf
+    sky-sig-01.prod correlation_id=68a0296f name=archive-sidecar-to-s3 state=started
+    sky-sig-01.prod correlation_id=68a0296f name=archive-sidecar-to-s3 state=completed archive-path=s3:/path/to/file/TTB-GODD004-030.xml
+    sky-sig-01.prod correlation_id=68a0296f name=request-ingest state=mark
+    sky-sig-01.prod correlation_id=68a0296f name=process-new-material state=completed av-file=TTB-GODD004-030.mxf sidecar=TTB-GODD004-030.xml
+
+    hon-web-01.prod correlation_id=68a0296f name=ingest state=enqueued clock=TTB/GODD044/030
+    hon-que-01.prod correlation_id=68a0296f name=ingest state=started clock=TTB/GODD044/030
+    hon-que-01.prod correlation_id=68a0296f name=ingest state=completed clock=TTB/GODD044/030
+
+    hon-que-01.prod correlation_id=68a0296f name=make-thumbnails state=enqueued clock=TTB/GODD044/030
+    hon-que-01.prod correlation_id=68a0296f name=make-proxies state=enqueued clock=TTB/GODD044/030
+    hon-que-01.prod correlation_id=68a0296f name=make-desitnation-master state=enqueued clock=TTB/GODD044/030 destination=Discovery
+    hon-que-01.prod correlation_id=68a0296f name=make-desitnation-master state=enqueued clock=TTB/GODD044/030 destination='Channel 5'
+
+    hon-que-01.prod correlation_id=68a0296f name=make-thumbnails state=started clock=TTB/GODD044/030 
+    hon-que-01.prod correlation_id=68a0296f name=make-thumbnails state=completed clock=TTB/GODD044/030 
+
+    hon-que-01.prod correlation_id=68a0296f name=make-proxies state=started clock=TTB/GODD044/030 
+    hon-que-01.prod correlation_id=68a0296f name=make-proxies state=completed clock=TTB/GODD044/030 
+
+    hon-qtm-01.prod correlation_id=68a0296f name=make-dm state=started clock=TTB/GODD044/030 destination=Discovery
+    hon-qtm-01.prod correlation_id=68a0296f name=make-dm state=completed clock=TTB/GODD044/030 destination=Discovery
+
+    hon-qtm-01.prod correlation_id=68a0296f name=make-dm state=started clock=TTB/GODD044/030 destination='Channel 5'
+    hon-qtm-01.prod correlation_id=68a0296f name=make-dm state=completed clock=TTB/GODD044/030 destination='Channel 5'
+    hon-qtm-01.prod correlation_id=68a0296f name=deliver-dm state=enqueued clock=TTB/GODD044/030 destination='Discovery' 
+    hon-qtm-01.prod correlation_id=68a0296f name=deliver-dm state=enqueued clock=TTB/GODD044/030 destination='Channel 5' 
+    hon-que-01.prod correlation_id=68a0296f name=deliver-dm state=started clock=TTB/GODD044/030 destination=Discovery 
+    hon-que-01.prod correlation_id=68a0296f name=deliver-dm state=completed clock=TTB/GODD044/030 destination=Discovery 
+
+    hon-que-01.prod correlation_id=68a0296f name=deliver-dm state=started clock=TTB/GODD044/030 destination='Channel 5' 
+    hon-que-01.prod correlation_id=68a0296f name=deliver-dm state=completed clock=TTB/GODD044/030 destination='Channel 5'
+
+# Usage
+
+Include in your `Gemfile` with:
+
+	gem 'event-logger', :git => 'git@github.com:honeycomb-tv/event-logger.git'
+
+Instantiate the logger e.g.:
+
+	EventLogger.instance.logger = Logger.new(opts[:logfile] || STDOUT)
+	
+Then log with the `log` method e.g.:
+
+## Mark:
+	EventLogger.log(:process, name: 'ingest_material', state: 'mark', details: "ignoring: #{File.basename(mxf_file)}")
+## Started:
+	EventLogger.log(:process, name: 'ingest_material', state: 'started', clock_number: clock_number)
+## Failed:
+	EventLogger.log(:process, name: 'ingest_material', state: 'failed', details: 'cannot upload directory', severity: 'error')
+## Completed:
+	EventLogger.log(:process, name: 'ingest_material', state: 'completed', clock_number: clock_number, details: 'completed ingest with sidecar from s3')
