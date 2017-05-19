@@ -1,10 +1,9 @@
 # Produce consistent, self describing log entries which allow us
 # to measure things across the whole system
 
-require_relative '../../lib/event-logger.rb'
+require_relative '../../lib/event_logger.rb'
 
 describe EventLogger do
-
   subject { EventLogger.instance }
 
   it 'is a singleton' do
@@ -12,19 +11,20 @@ describe EventLogger do
   end
 
   it 'exposes a class method .log for convenience' do
-    expect(subject).to receive(:log).with(:job, name: 'validate', state: :completed)
+    expect(subject).to receive(:log).with(:job,
+                                          name: 'validate',
+                                          state: :completed)
 
     EventLogger.log(:job, name: 'validate', state: :completed)
   end
 
   it 'formats all passed details into readable key value pairs' do
-    entry = subject.send :format_log_entry, { type: :job, name: 'transcoding_job', state: :enqueued, materialid: 'TTB/GODD004/030' }
+    entry = subject.send :format_log_entry, { type: :job,
+                                              name: 'transcoding_job',
+                                              state: :enqueued,
+                                              materialid: 'TTB/GODD004/030' }
 
     expect(entry).to eq('type=job name=transcoding_job state=enqueued materialid=TTB/GODD004/030')
-  end
-
-  it 'can be configured with a logger of your choice' do
-
   end
 
   it 'passes the log entry to the logger so it ends up in the right place' do
@@ -36,17 +36,16 @@ describe EventLogger do
   end
 
   it 'determines the severity from the event mapping' do
-
     my_logger = instance_double(Logger)
     subject.logger = my_logger
-    subject.mapping = {"validate" => {state: :failed, severity: :error}}
+    subject.mapping = {"validate" => {state: :failed,
+                                      severity: :error}}
     expect(my_logger).to receive(:error).with('type=job name=validate state=failed').once
 
     subject.log(:job, name: 'validate', state: :failed)
   end
 
   it 'allows overriding of severity' do
-
     my_logger = instance_double(Logger)
     subject.logger = my_logger
     expect(my_logger).to receive(:warn).with('type=mark name=all_jobs_scheduled').once
@@ -55,15 +54,12 @@ describe EventLogger do
   end
 
   it 'can create a Correlation ID' do
-
-    first_correlation_id = subject.create_correlation_id()
+    first_correlation_id = subject.create_correlation_id
     expect(first_correlation_id).to match('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')
 
-    second_correlation_id = subject.create_correlation_id()
+    second_correlation_id = subject.create_correlation_id
     expect(second_correlation_id).to match('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')
 
     expect(first_correlation_id).not_to eq(second_correlation_id)
-
   end
-
 end
