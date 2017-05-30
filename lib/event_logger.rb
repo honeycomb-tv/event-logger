@@ -1,6 +1,7 @@
 require 'singleton'
 require 'logger'
 require 'uuidtools'
+require 'json'
 
 # Event logger based on:
 # https://blog.logentries.com/2015/07/ditch-the-debugger-and-use-log-analysis-instead/
@@ -41,6 +42,6 @@ class EventLogger
   end
 
   def format_log_entry(details = {})
-    details.map { |key, value| "#{key}=#{value}" }.join(' ')
+    JSON.generate(details)
   end
 end

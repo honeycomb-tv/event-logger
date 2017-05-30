@@ -1,16 +1,14 @@
 # event-logger
 
-Log entries to a standard `name=value` format.
+Log entries to a standard `JSON` format.
 
 e.g.
 
-    type=job name=upload_material_job job_id=2949ad19-6c2a-4aec-b097-47a81ce629d3 state=enqueued materialid=TST/TEST017/015 material_id=8410 upload_id=537
+    { "type": "job", "name": "upload_material_job", "job_id": "2949ad19-6c2a-4aec-b097-47a81ce629d3", "state": "enqueued", "material_id": "TST/TEST017/015" }
 
 Based on:
 
 [Ditch the Debugger and use Log Analysis Instead](https://blog.logentries.com/2015/07/ditch-the-debugger-and-use-log-analysis-instead/) by Matthew Skelton.
-
-*There is ongoing discussion about switching to a JSON format.  We are trying this out on one of our services before we make a decision.  When this happens this logger will need to be updated accordingly.*
 
 # Log Elements and Format
 
@@ -34,41 +32,42 @@ Once ingested jobs are enqueued for the production of the Destination Masters, P
 
 So when we put the logs together from `sky-sig-01.prod`, `hon-web-01.prod`, `hon-que-01.prod`, `hon-qtm-01.prod` and we should see something like:
 
-    sky-sig-01.prod correlation_id=68a0296f name=process-new-material state=started av-file=TTB-GODD004-030.mxf sidecar=TTB-GODD004-030.xml
-    sky-sig-01.prod correlation_id=68a0296f name=archive-av-file-to-s3 state=started
-    sky-sig-01.prod correlation_id=68a0296f name=archive-av-file-to-s3 state=completed archive-path=s3:/path/to/file/TTB-GODD004-030.mxf
-    sky-sig-01.prod correlation_id=68a0296f name=archive-sidecar-to-s3 state=started
-    sky-sig-01.prod correlation_id=68a0296f name=archive-sidecar-to-s3 state=completed archive-path=s3:/path/to/file/TTB-GODD004-030.xml
-    sky-sig-01.prod correlation_id=68a0296f name=request-ingest state=mark
-    sky-sig-01.prod correlation_id=68a0296f name=process-new-material state=completed av-file=TTB-GODD004-030.mxf sidecar=TTB-GODD004-030.xml
+    sky-sig-01.prod {"correlation_id":"68a0296f", "name":"process-new-material", "state":"started", "av-file":"TTB-GODD004-030.mxf", "sidecar":"TTB-GODD004-030.xml"}
+    sky-sig-01.prod {"correlation_id":"68a0296f", "name":"archive-av-file-to-s3", "state":"started"}
+    sky-sig-01.prod {"correlation_id":"68a0296f", "name":"archive-av-file-to-s3", "state":"completed", "archive-path":"s3:/path/to/file/TTB-GODD004-030.mxf"}
+    sky-sig-01.prod {"correlation_id":"68a0296f", "name":"archive-sidecar-to-s3", "state":"started"}
+    sky-sig-01.prod {"correlation_id":"68a0296f", "name":"archive-sidecar-to-s3", "state":"completed", "archive-path":"s3:/path/to/file/TTB-GODD004-030.xml"}
+    sky-sig-01.prod {"correlation_id":"68a0296f", "name":"request-ingest", "state":"mark"}
+    sky-sig-01.prod {"correlation_id":"68a0296f", "name":"process-new-material", "state":"completed", "av-file":"TTB-GODD004-030.mxf", "sidecar":"TTB-GODD004-030.xml"}
 
-    hon-web-01.prod correlation_id=68a0296f name=ingest state=enqueued clock=TTB/GODD044/030
-    hon-que-01.prod correlation_id=68a0296f name=ingest state=started clock=TTB/GODD044/030
-    hon-que-01.prod correlation_id=68a0296f name=ingest state=completed clock=TTB/GODD044/030
+    hon-web-01.prod {"correlation_id":"68a0296f", "name":"ingest", "state":"enqueued", "clock":"TTB/GODD044/030"}
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"ingest", "state":"started", "clock":"TTB/GODD044/030"}
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"ingest", "state":"completed", "clock":"TTB/GODD044/030"}
 
-    hon-que-01.prod correlation_id=68a0296f name=make-thumbnails state=enqueued clock=TTB/GODD044/030
-    hon-que-01.prod correlation_id=68a0296f name=make-proxies state=enqueued clock=TTB/GODD044/030
-    hon-que-01.prod correlation_id=68a0296f name=make-desitnation-master state=enqueued clock=TTB/GODD044/030 destination=Discovery
-    hon-que-01.prod correlation_id=68a0296f name=make-desitnation-master state=enqueued clock=TTB/GODD044/030 destination='Channel 5'
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-thumbnails", "state":"enqueued", "clock":"TTB/GODD044/030"}
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-proxies", "state":"enqueued", "clock":"TTB/GODD044/030"}
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-destination-master", "state":"enqueued", "clock":"TTB/GODD044/030", "destination":"Discovery"}
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-destination-master", "state":"enqueued", "clock":"TTB/GODD044/030", "destination":"Channel 5"}
 
-    hon-que-01.prod correlation_id=68a0296f name=make-thumbnails state=started clock=TTB/GODD044/030 
-    hon-que-01.prod correlation_id=68a0296f name=make-thumbnails state=completed clock=TTB/GODD044/030 
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-thumbnails", "state":"started", "clock":"TTB/GODD044/030"} 
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-thumbnails", "state":"completed", "clock":"TTB/GODD044/030"} 
 
-    hon-que-01.prod correlation_id=68a0296f name=make-proxies state=started clock=TTB/GODD044/030 
-    hon-que-01.prod correlation_id=68a0296f name=make-proxies state=completed clock=TTB/GODD044/030 
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-proxies", "state":"started", "clock":"TTB/GODD044/030"} 
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-proxies", "state":"completed", "clock":"TTB/GODD044/030"} 
 
-    hon-qtm-01.prod correlation_id=68a0296f name=make-dm state=started clock=TTB/GODD044/030 destination=Discovery
-    hon-qtm-01.prod correlation_id=68a0296f name=make-dm state=completed clock=TTB/GODD044/030 destination=Discovery
+    hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"make-dm", "state":"started", "clock":"TTB/GODD044/030", "destination":"Discovery"}
+    hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"make-dm", "state":"completed", "clock":"TTB/GODD044/030", "destination":"Discovery"}
 
-    hon-qtm-01.prod correlation_id=68a0296f name=make-dm state=started clock=TTB/GODD044/030 destination='Channel 5'
-    hon-qtm-01.prod correlation_id=68a0296f name=make-dm state=completed clock=TTB/GODD044/030 destination='Channel 5'
-    hon-qtm-01.prod correlation_id=68a0296f name=deliver-dm state=enqueued clock=TTB/GODD044/030 destination='Discovery' 
-    hon-qtm-01.prod correlation_id=68a0296f name=deliver-dm state=enqueued clock=TTB/GODD044/030 destination='Channel 5' 
-    hon-que-01.prod correlation_id=68a0296f name=deliver-dm state=started clock=TTB/GODD044/030 destination=Discovery 
-    hon-que-01.prod correlation_id=68a0296f name=deliver-dm state=completed clock=TTB/GODD044/030 destination=Discovery 
+    hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"make-dm", "state":"started", "clock":"TTB/GODD044/030", "destination":"Channel 5"}
+    hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"make-dm", "state":"completed", "clock":"TTB/GODD044/030", "destination":"Channel 5"}
+    hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"enqueued", "clock":"TTB/GODD044/030", "destination":"Discovery"} 
+    hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"enqueued", "clock":"TTB/GODD044/030", "destination":"'Channel 5"} 
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"started", "clock":"TTB/GODD044/030", "destination":"Discovery"} 
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"completed", "clock":"TTB/GODD044/030", "destination":"Discovery"} 
 
-    hon-que-01.prod correlation_id=68a0296f name=deliver-dm state=started clock=TTB/GODD044/030 destination='Channel 5' 
-    hon-que-01.prod correlation_id=68a0296f name=deliver-dm state=completed clock=TTB/GODD044/030 destination='Channel 5'
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"started", "clock":"TTB/GODD044/030", "destination":"Channel 5"} 
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"completed", "clock":"TTB/GODD044/030", "destination":"Channel 5"}
+
 
 # Usage
 

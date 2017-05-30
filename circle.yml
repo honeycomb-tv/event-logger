@@ -1,0 +1,2 @@
+post:
+    - bundle exec rubocop -RDES
