@@ -5,11 +5,6 @@ Rails:
 
 AllCops:
   TargetRubyVersion: 2.4.1
-  Exclude:
-    - 'config/**/*'
-    - 'script/**/*'
-    - 'vendor/**/*'
-    - 'bin/**/*'
 
 Metrics/ClassLength:
   Max: 500
@@ -31,8 +26,6 @@ Style/FrozenStringLiteralComment:
 RSpec/DescribeClass:
   Exclude:
     - 'spec/tasks/**/*_spec.rb'
-    - 'spec/cli/rackup_spec.rb'
-
 
 Style/ClassAndModuleChildren:
   Enabled: false
