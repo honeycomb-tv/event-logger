@@ -73,7 +73,7 @@ So when we put the logs together from `sky-sig-01.prod`, `hon-web-01.prod`, `hon
 
 Include in your `Gemfile` with:
 
-	gem 'event-logger', :git => 'git@github.com:honeycomb-tv/event-logger.git'
+	gem 'event-logger'
 
 Instantiate the logger e.g.:
 
