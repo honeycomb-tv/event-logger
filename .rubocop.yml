@@ -82,8 +82,6 @@ Metrics/MethodLength:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*_spec.rb'
-    - 'spec/factories/**/*.rb'
-    - '**/*.rake'
 
 # The default 5 line limit is unusable when statements such as
 # gets with lots of parameters are spread over multiple lines IMO.
