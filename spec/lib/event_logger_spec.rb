@@ -1,61 +1,72 @@
 # Produce consistent, self describing log entries which allow us
 # to measure things across the whole system
 
-# Starting in the Rails world but there is no reason why this should not be
-# factored out of honeycomb-web and also used by Ingest and the Receiving Agent
-
-require 'rails_helper'
-
-EVENTS = {
-  transcode_start: 20000,
-  transcode_end: 20001,
-  transcode_queue: 20002,
-  transcode_abort: 20003
-}
+require_relative '../../lib/event_logger.rb'
 
 describe EventLogger do
-  subject { EventLogger.instance }
-
+  subject { described_class.instance }
 
   it 'is a singleton' do
-    expect(subject).to eq(EventLogger.instance)
+    expect(subject).to eq(described_class.instance)
   end
 
-  it 'exposes a class method .log for convenience' do
-    expect(subject).to receive(:log).with(:job, name: 'validate', state: :completed)
+  it 'formats all passed details into JSON' do
+    entry = subject.send :format_log_entry, type: :job,
+                                            name: 'transcoding_job',
+                                            state: :enqueued,
+                                            materialid: 'TTB/GODD004/030'
 
-    EventLogger.log(:job, name: 'validate', state: :completed)
+    expect(entry)
+      .to eq('{"type":"job","name":"transcoding_job",'\
+             '"state":"enqueued","materialid":"TTB/GODD004/030"}')
   end
 
-  it 'formats all passed details into readable key value pairs' do
-    entry = subject.send :format_log_entry, { type: :job, name: 'transcoding_job', state: :enqueued, materialid: 'TTB/GODD004/030' }
-
-    expect(entry).to eq('type=job name=transcoding_job state=enqueued materialid=TTB/GODD004/030')
-  end
-
-  it 'passes the log entry to the rails logger so it ends up in the right place' do
-    expect(Rails.logger).to receive(:info).with('type=job name=make_thumbnails state=failed').once
+  it 'passes the log entry to the logger so it ends up in the right place' do
+    my_logger = instance_spy(Logger)
+    allow(my_logger).to receive(:info)
+    subject.logger = my_logger
 
     subject.log(:job, name: 'make_thumbnails', state: 'failed')
-  end
 
-  it 'adds a traceable job_id to every logged event' do
-    skip 'not yet implemented'
+    expect(my_logger)
+      .to have_received(:info)
+      .with('{"type":"job","name":"make_thumbnails","state":"failed"}').once
   end
 
   it 'determines the severity from the event mapping' do
-    skip 'not yet implemented'
-
-    expect(Rails.logger).to receive(:error).with('type=job name=validate state=failed').once
-
+    my_logger = instance_spy(Logger)
+    allow(my_logger).to receive(:error)
+    subject.logger = my_logger
+    subject.mapping = { 'validate' => { state: :failed,
+                                        severity: :error } }
     subject.log(:job, name: 'validate', state: :failed)
+
+    expect(my_logger)
+      .to have_received(:error)
+      .with('{"type":"job","name":"validate","state":"failed"}').once
   end
 
   it 'allows overriding of severity' do
-    skip 'not yet implemented'
-
-    expect(Rails.logger).to receive(:warn).with('type=mark name=all_jobs_scheduled').once
+    my_logger = instance_spy(Logger)
+    allow(my_logger).to receive(:warn)
+    subject.logger = my_logger
 
     subject.log(:mark, name: 'all_jobs_scheduled', severity: :warn)
+
+    expect(my_logger)
+      .to have_received(:warn)
+      .with('{"type":"mark","name":"all_jobs_scheduled"}').once
+  end
+
+  it 'can create a Correlation ID' do
+    first_correlation_id = subject.create_correlation_id
+    expect(first_correlation_id)
+      .to match('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')
+
+    second_correlation_id = subject.create_correlation_id
+    expect(second_correlation_id)
+      .to match('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}')
+
+    expect(first_correlation_id).not_to eq(second_correlation_id)
   end
 end

@@ -1,19 +1,100 @@
-Style/Encoding:
-  Enabled: false
+require: rubocop-rspec
 
-Metrics/LineLength:
-  Max: 120
-
-Style/ClassAndModuleChildren:
-  EnforcedStyle: compact
-
-Documentation:
+Rails:
   Enabled: false
 
 AllCops:
-  RunRailsCops: true
+  TargetRubyVersion: 2.4.1
   Exclude:
-    - 'db/**/*'
     - 'config/**/*'
     - 'script/**/*'
+    - 'vendor/**/*'
+    - 'bin/**/*'
+
+Metrics/ClassLength:
+  Max: 500
+
+HttpPositionalArguments:
+  Enabled: false
+
+# Group gems logically rather than alphabetically.
+Bundler/OrderedGems:
+  Enabled: false
+
+# Documentation comments are optional.
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Exclude:
+    - 'spec/tasks/**/*_spec.rb'
+    - 'spec/cli/rackup_spec.rb'
+
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/AndOr:
+  Enabled: true
+  EnforcedStyle: conditionals
+
+Style/Lambda:
+  Enabled: false
+
+# Do not enforce word array style, leave decision to developer.
+Style/WordArray:
+  Enabled: false
+
+# Allow use of let! in specs
+RSpec/LetSetup:
+  Enabled: false
+
+# This rule currently is bugged, cannot be configured to use slashes.
+Style/RegexpLiteral:
+  Enabled: false
+
+# Do not force coupling to Rails.
+Rails/Delegate:
+  Enabled: false
+
+Style/VariableNumber:
+  EnforcedStyle: snake_case
+
+RSpec/NamedSubject:
+  Enabled: false
+
+# Do not force slow tests. Trust devs to make the readability call here.
+RSpec/MultipleExpectations:
+  Enabled: false
+
+# Ruby does not have a .to_bool method.
+Style/DoubleNegation:
+  Enabled: false
+
+# Rely on more meaningful complexity metrics
+Metrics/MethodLength:
+  Enabled: false
+
+# Don't limit DSL block length
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+    - 'spec/factories/**/*.rb'
+    - '**/*.rake'
+
+# The default 5 line limit is unusable when statements such as
+# gets with lots of parameters are spread over multiple lines IMO.
+RSpec/ExampleLength:
+  Max: 15
+
+# Don't sacrifice readability for performance unless needed.
+Performance/Casecmp:
+  Enabled: false
+
+# We like DSL writers.
+Style/TrivialAccessors:
+  AllowDSLWriters: true
 
