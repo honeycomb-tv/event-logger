@@ -3,8 +3,6 @@
 source 'https://rubygems.org'
 ruby '2.4.1'
 
-gem 'uuidtools'
-
 group :console do
   # PRY for debugging
   gem 'pry'

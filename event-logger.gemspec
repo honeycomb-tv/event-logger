@@ -9,5 +9,4 @@ Gem::Specification.new do |s|
   s.license     = 'BSD-2-Clause'
   s.email       = 'developers@honeycomb.tv'
   s.files       = Dir['lib/**/*.rb']
-  s.add_runtime_dependency('uuidtools')
 end
