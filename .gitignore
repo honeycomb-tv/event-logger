@@ -27,3 +27,6 @@
 
 # Swap files
 **/*.swp
+
+# Built gems
+*.gem
