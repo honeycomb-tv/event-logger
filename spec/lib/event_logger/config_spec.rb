@@ -7,6 +7,17 @@ describe EventLogger::Config do
     it 'defaults to :logger' do
       expect(subject.logger).to eq(:logger)
     end
+
+    context 'with EVENT_LOGGER_LOGGER env' do
+      let(:env_logger) { 'stdout' }
+
+      before { ENV['EVENT_LOGGER_LOGGER'] = env_logger }
+      after { ENV.delete('EVENT_LOGGER_LOGGER') }
+
+      it 'defaults to EVENT_LOGGER_LOGGER' do
+        expect(subject.logger).to eq(:stdout)
+      end
+    end
   end
 
   describe '#logger=' do
