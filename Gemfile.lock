@@ -39,7 +39,6 @@ GEM
     ruby-progressbar (1.8.1)
     slop (3.6.0)
     unicode-display_width (1.2.1)
-    uuidtools (2.1.5)
 
 PLATFORMS
   ruby
@@ -49,10 +48,9 @@ DEPENDENCIES
   rspec
   rubocop (~> 0.40)
   rubocop-rspec (~> 1.5)
-  uuidtools
 
 RUBY VERSION
    ruby 2.4.1p111
 
 BUNDLED WITH
-   1.15.0
+   1.15.1

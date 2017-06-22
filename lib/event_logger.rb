@@ -1,6 +1,6 @@
 require 'singleton'
 require 'logger'
-require 'uuidtools'
+require 'securerandom'
 require 'json'
 
 # Event logger based on:
@@ -32,7 +32,7 @@ class EventLogger
   end
 
   def create_correlation_id
-    UUIDTools::UUID.random_create.to_s
+    SecureRandom.uuid
   end
 
   private
