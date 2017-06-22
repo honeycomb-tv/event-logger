@@ -9,6 +9,9 @@ AllCops:
 Metrics/ClassLength:
   Max: 500
 
+Metrics/LineLength:
+  Max: 100
+
 HttpPositionalArguments:
   Enabled: false
 

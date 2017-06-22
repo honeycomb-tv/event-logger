@@ -89,3 +89,23 @@ Then log with the `log` method e.g.:
 	EventLogger.log(:process, name: 'ingest_material', state: 'failed', details: 'cannot upload directory', severity: 'error')
 ## Completed:
 	EventLogger.log(:process, name: 'ingest_material', state: 'completed', clock_number: clock_number, details: 'completed ingest with sidecar from s3')
+
+## Configuration
+
+By default, EventLogger will write to stdout with full Logger headers:
+
+    I, [2017-06-22T09:04:44.827889 #7]  INFO -- : {"type":"process","name":"transcend","state":"start","details":"Starting Transcend Server."}
+
+When using this with the Docker Logentries container, you should instead
+configure the message to be output in JSON format without Logger headers:
+
+    EventLogger.instance.config.logger = :stdout
+
+All available configuration options set via `EventLogger.instance.config`
+are:
+
+* `logger` - set to one of:
+    * `:logger` (default) for `Logger` on STDOUT
+    * `:stdout` to write to STDOUT undecorated (`generated_at` and `level` will be included in the JSON)
+    * an IO object that responds to `<<`
+    * a logging object that responds to severity methods, e.g. `info`
