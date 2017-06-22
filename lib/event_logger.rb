@@ -1,18 +1,18 @@
 require 'singleton'
-require 'logger'
 require 'securerandom'
-require 'json'
+
+require_relative 'event_logger/config'
 
 # Event logger based on:
 # https://blog.logentries.com/2015/07/ditch-the-debugger-and-use-log-analysis-instead/
 class EventLogger
-  attr_accessor :logger
+  attr_reader :config
   attr_accessor :mapping
 
   include Singleton
 
   def initialize
-    @logger = Logger.new(STDOUT)
+    @config = Config.new
     @mapping = nil
   end
 
@@ -26,9 +26,10 @@ class EventLogger
                elsif @mapping && @mapping.key?(details[:name])
                  @mapping[details[:name]][:severity]
                else
-                 'info'
-               end
-    @logger.send(severity, format_log_entry(details_for(type, details)))
+                 :info
+               end.to_sym
+
+    config.logger_instance.write severity, details_for(type, details)
   end
 
   def create_correlation_id
@@ -39,9 +40,5 @@ class EventLogger
 
   def details_for(type, details)
     { type: type }.merge(details)
-  end
-
-  def format_log_entry(details = {})
-    JSON.generate(details)
   end
 end
