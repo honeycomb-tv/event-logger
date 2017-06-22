@@ -6,6 +6,6 @@ Gem::Specification.new do |s|
   s.description = 'Consistent Event Logging'
   s.authors     = ['Honeycomb']
   s.email       = 'developers@honeycomb.tv'
-  s.files       = ['lib/event_logger.rb']
+  s.files       = Dir['lib/**/*.rb']
   s.add_runtime_dependency('uuidtools')
 end
