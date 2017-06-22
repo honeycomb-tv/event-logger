@@ -109,3 +109,8 @@ are:
     * `:stdout` to write to STDOUT undecorated (`generated_at` and `level` will be included in the JSON)
     * an IO object that responds to `<<`
     * a logging object that responds to severity methods, e.g. `info`
+
+## Environment variables
+
+* `EVENT_LOGGER_LOGGER` - change the default value of the `logger`
+  configuration option, either `logger` or `stdout`

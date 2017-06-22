@@ -8,7 +8,7 @@ class EventLogger
     attr_reader :logger
 
     def initialize
-      @logger = :logger
+      self.logger = ENV.fetch('EVENT_LOGGER_LOGGER', :logger).to_sym
     end
 
     def logger=(value)
