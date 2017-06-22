@@ -5,6 +5,8 @@ Gem::Specification.new do |s|
   s.summary     = 'Event Logger'
   s.description = 'Consistent Event Logging'
   s.authors     = ['Honeycomb']
+  s.homepage    = 'https://github.com/honeycomb-tv/event-logger'
+  s.license     = 'BSD-2-Clause'
   s.email       = 'developers@honeycomb.tv'
   s.files       = ['lib/event_logger.rb']
   s.add_runtime_dependency('uuidtools')
