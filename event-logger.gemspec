@@ -8,6 +8,6 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/honeycomb-tv/event-logger'
   s.license     = 'BSD-2-Clause'
   s.email       = 'developers@honeycomb.tv'
-  s.files       = ['lib/event_logger.rb']
+  s.files       = Dir['lib/**/*.rb']
   s.add_runtime_dependency('uuidtools')
 end
