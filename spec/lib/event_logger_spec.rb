@@ -22,6 +22,11 @@ describe EventLogger do
       .with(:info, type: :job, name: 'make_thumbnails', state: 'failed').once
   end
 
+  it 'returns nil' do
+    allow(output).to receive(:write).and_return(:io_return_value)
+    expect(subject.log(:job, name: 'make_thumbnails', state: 'failed')).to be_nil
+  end
+
   it 'determines the severity from the event mapping' do
     allow(output).to receive(:write)
     subject.mapping = { 'validate' => { state: :failed,

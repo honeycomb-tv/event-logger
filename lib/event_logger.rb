@@ -30,6 +30,8 @@ class EventLogger
                end.to_sym
 
     config.logger_instance.write severity, details_for(type, details)
+
+    nil
   end
 
   def create_correlation_id
