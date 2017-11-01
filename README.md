@@ -20,7 +20,7 @@ Valid states are:
 
 * `enqueued` - Enqueued waiting to be started
 * `started` - Process has started
-* `mark` - Useful way point or event 
+* `mark` - Useful way point or event
 * `completed` - Process has completed
 * `failed` - Process has failed
 
@@ -49,47 +49,51 @@ So when we put the logs together from `sky-sig-01.prod`, `hon-web-01.prod`, `hon
     hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-destination-master", "state":"enqueued", "clock":"TTB/GODD044/030", "destination":"Discovery"}
     hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-destination-master", "state":"enqueued", "clock":"TTB/GODD044/030", "destination":"Channel 5"}
 
-    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-thumbnails", "state":"started", "clock":"TTB/GODD044/030"} 
-    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-thumbnails", "state":"completed", "clock":"TTB/GODD044/030"} 
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-thumbnails", "state":"started", "clock":"TTB/GODD044/030"}
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-thumbnails", "state":"completed", "clock":"TTB/GODD044/030"}
 
-    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-proxies", "state":"started", "clock":"TTB/GODD044/030"} 
-    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-proxies", "state":"completed", "clock":"TTB/GODD044/030"} 
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-proxies", "state":"started", "clock":"TTB/GODD044/030"}
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"make-proxies", "state":"completed", "clock":"TTB/GODD044/030"}
 
     hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"make-dm", "state":"started", "clock":"TTB/GODD044/030", "destination":"Discovery"}
     hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"make-dm", "state":"completed", "clock":"TTB/GODD044/030", "destination":"Discovery"}
 
     hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"make-dm", "state":"started", "clock":"TTB/GODD044/030", "destination":"Channel 5"}
     hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"make-dm", "state":"completed", "clock":"TTB/GODD044/030", "destination":"Channel 5"}
-    hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"enqueued", "clock":"TTB/GODD044/030", "destination":"Discovery"} 
-    hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"enqueued", "clock":"TTB/GODD044/030", "destination":"'Channel 5"} 
-    hon-que-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"started", "clock":"TTB/GODD044/030", "destination":"Discovery"} 
-    hon-que-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"completed", "clock":"TTB/GODD044/030", "destination":"Discovery"} 
+    hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"enqueued", "clock":"TTB/GODD044/030", "destination":"Discovery"}
+    hon-qtm-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"enqueued", "clock":"TTB/GODD044/030", "destination":"'Channel 5"}
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"started", "clock":"TTB/GODD044/030", "destination":"Discovery"}
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"completed", "clock":"TTB/GODD044/030", "destination":"Discovery"}
 
-    hon-que-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"started", "clock":"TTB/GODD044/030", "destination":"Channel 5"} 
+    hon-que-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"started", "clock":"TTB/GODD044/030", "destination":"Channel 5"}
     hon-que-01.prod {"correlation_id":"68a0296f", "name":"deliver-dm", "state":"completed", "clock":"TTB/GODD044/030", "destination":"Channel 5"}
 
 
 # Usage
 
 Include in your `Gemfile` with:
+```ruby
+gem 'event-logger'
+```
 
-	gem 'event-logger'
-
-Instantiate the logger e.g.:
-
-	EventLogger.instance.logger = Logger.new(opts[:logfile] || STDOUT)
-	
 Then log with the `log` method e.g.:
 
 ## Mark:
-	EventLogger.log(:process, name: 'ingest_material', state: 'mark', details: "ignoring: #{File.basename(mxf_file)}")
+```ruby
+EventLogger.log(:process, name: 'ingest_material', state: 'mark', details: "ignoring: #{File.basename(mxf_file)}")
+```
 ## Started:
-	EventLogger.log(:process, name: 'ingest_material', state: 'started', clock_number: clock_number)
+```ruby
+EventLogger.log(:process, name: 'ingest_material', state: 'started', clock_number: clock_number)
+```
 ## Failed:
-	EventLogger.log(:process, name: 'ingest_material', state: 'failed', details: 'cannot upload directory', severity: 'error')
+```ruby
+EventLogger.log(:process, name: 'ingest_material', state: 'failed', details: 'cannot upload directory', severity: 'error')
+```
 ## Completed:
-	EventLogger.log(:process, name: 'ingest_material', state: 'completed', clock_number: clock_number, details: 'completed ingest with sidecar from s3')
-
+```ruby
+EventLogger.log(:process, name: 'ingest_material', state: 'completed', clock_number: clock_number, details: 'completed ingest with sidecar from s3')
+```
 ## Configuration
 
 By default, EventLogger will write to stdout with full Logger headers:
@@ -98,9 +102,9 @@ By default, EventLogger will write to stdout with full Logger headers:
 
 When using this with the Docker Logentries container, you should instead
 configure the message to be output in JSON format without Logger headers:
-
-    EventLogger.instance.config.logger = :stdout
-
+```ruby
+EventLogger.instance.config.logger = :stdout
+```
 All available configuration options set via `EventLogger.instance.config`
 are:
 
