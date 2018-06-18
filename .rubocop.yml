@@ -92,3 +92,7 @@ Performance/Casecmp:
 Style/TrivialAccessors:
   AllowDSLWriters: true
 
+# Exclude requireable file matching the gem name
+Style/FileName:
+  Exclude:
+    - 'lib/event-logger.rb'
