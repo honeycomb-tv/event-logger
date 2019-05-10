@@ -5,7 +5,7 @@ jobs:
       - image: ruby:2.6.3-alpine
     steps:
       # Install dependencies
-      - run: apk update && apk upgrade && apk add git
+      - run: apk update && apk upgrade && apk add git make gcc libc-dev
 
       - checkout
 
