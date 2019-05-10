@@ -23,7 +23,7 @@ class EventLogger
   def log(type, details = {})
     severity = if details.key?(:severity)
                  details.delete(:severity)
-               elsif @mapping && @mapping.key?(details[:name])
+               elsif @mapping&.key?(details[:name])
                  @mapping[details[:name]][:severity]
                else
                  :info

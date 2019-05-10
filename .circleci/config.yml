@@ -2,10 +2,10 @@ version: 2
 jobs:
   build:
     docker:
-      - image: ruby:2.4.1-alpine
+      - image: ruby:2.6.3-alpine
     steps:
       # Install dependencies
-      - run: apk update && apk upgrade && apk add git
+      - run: apk update && apk upgrade && apk add git make gcc libc-dev
 
       - checkout
 

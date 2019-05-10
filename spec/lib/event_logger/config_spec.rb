@@ -12,6 +12,7 @@ describe EventLogger::Config do
       let(:env_logger) { 'stdout' }
 
       before { ENV['EVENT_LOGGER_LOGGER'] = env_logger }
+
       after { ENV.delete('EVENT_LOGGER_LOGGER') }
 
       it 'defaults to EVENT_LOGGER_LOGGER' do
@@ -45,7 +46,7 @@ describe EventLogger::Config do
       expect(subject.logger_instance.stream).to eq($stdout)
     end
 
-    context 'logger object' do
+    context 'when writing to a logger object' do
       let(:output) { instance_double(Object) }
 
       before { allow(output).to receive(:respond_to?).with(:<<).and_return(false).twice }
@@ -58,7 +59,7 @@ describe EventLogger::Config do
       end
     end
 
-    context 'IO object' do
+    context 'when writing to an IO object' do
       let(:output) { instance_double(IO) }
 
       before { allow(output).to receive(:respond_to?).with(:<<).and_return(true).twice }
